@@ -13,7 +13,7 @@ import {
   Dimensions,
   View,
   Text,
-  ListView,
+  FlatList,
   TouchableWithoutFeedback,
   TouchableNativeFeedback,
   TouchableOpacity,
@@ -291,13 +291,13 @@ export default class ModalDropdown extends Component {
   }
 
   _renderDropdown() {
-    const {scrollEnabled, renderSeparator, showsVerticalScrollIndicator, keyboardShouldPersistTaps} = this.props;
+    const {scrollEnabled, renderSeparator, showsVerticalScrollIndicator, keyboardShouldPersistTaps, keyExtractor} = this.props;
     return (
-      <ListView scrollEnabled={scrollEnabled}
+      <FlatList scrollEnabled={scrollEnabled}
                 style={styles.list}
-                dataSource={this._dataSource}
-                renderRow={this._renderRow}
-                renderSeparator={renderSeparator || this._renderSeparator}
+                data={this._dataSource}
+                renderItem={this._renderRow}
+                keyExtractor={keyExtractor}
                 automaticallyAdjustContentInsets={false}
                 showsVerticalScrollIndicator={showsVerticalScrollIndicator}
                 keyboardShouldPersistTaps={keyboardShouldPersistTaps}
@@ -307,13 +307,10 @@ export default class ModalDropdown extends Component {
 
   get _dataSource() {
     const {options} = this.props;
-    const ds = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2
-    });
-    return ds.cloneWithRows(options);
+    return options;
   }
 
-  _renderRow = (rowData, sectionID, rowID, highlightRow) => {
+  _renderRow = ({ item: rowData, index: rowID}) => {
     const {renderRow, dropdownTextStyle, dropdownTextHighlightStyle, accessible} = this.props;
     const {selectedIndex} = this.state;
     const key = `row_${rowID}`;
@@ -332,7 +329,7 @@ export default class ModalDropdown extends Component {
     const preservedProps = {
       key,
       accessible,
-      onPress: () => this._onRowPress(rowData, sectionID, rowID, highlightRow),
+      onPress: () => this._onRowPress(rowData, rowID),
     };
     if (TOUCHABLE_ELEMENTS.find(name => name == row.type.displayName)) {
       const props = {...row.props};
@@ -379,10 +376,9 @@ export default class ModalDropdown extends Component {
     );
   };
 
-  _onRowPress(rowData, sectionID, rowID, highlightRow) {
+  _onRowPress(rowData, rowID) {
     const {onSelect, renderButtonText, onDropdownWillHide} = this.props;
     if (!onSelect || onSelect(rowID, rowData) !== false) {
-      highlightRow(sectionID, rowID);
       const value = renderButtonText && renderButtonText(rowData) || rowData.toString();
       this._nextValue = value;
       this._nextIndex = rowID;
