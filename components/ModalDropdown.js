@@ -57,7 +57,9 @@ export default class ModalDropdown extends Component {
 
     onDropdownWillShow: PropTypes.func,
     onDropdownWillHide: PropTypes.func,
-    onSelect: PropTypes.func
+    onSelect: PropTypes.func,
+
+    buttonOpacity: PropTypes.number
   };
 
   static defaultProps = {
@@ -68,7 +70,8 @@ export default class ModalDropdown extends Component {
     options: null,
     animated: true,
     showsVerticalScrollIndicator: true,
-    keyboardShouldPersistTaps: 'never'
+    keyboardShouldPersistTaps: 'never',
+    buttonOpacity: 0.2
   };
 
   constructor(props) {
@@ -163,7 +166,7 @@ export default class ModalDropdown extends Component {
   }
 
   _renderButton() {
-    const {disabled, accessible, children, textStyle} = this.props;
+    const {disabled, accessible, children, textStyle, buttonOpacity} = this.props;
     const {buttonText} = this.state;
 
     return (
@@ -171,6 +174,7 @@ export default class ModalDropdown extends Component {
                         disabled={disabled}
                         accessible={accessible}
                         onPress={this._onButtonPress}
+                        activeOpacity={buttonOpacity}
       >
         {
           children ||
