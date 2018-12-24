@@ -49,6 +49,7 @@ export default class ModalDropdown extends Component {
     dropdownStyle: PropTypes.oneOfType([PropTypes.number, PropTypes.object, PropTypes.array]),
     dropdownTextStyle: PropTypes.oneOfType([PropTypes.number, PropTypes.object, PropTypes.array]),
     dropdownTextHighlightStyle: PropTypes.oneOfType([PropTypes.number, PropTypes.object, PropTypes.array]),
+    dropdownAutoWidth: PropTypes.bool,
 
     adjustFrame: PropTypes.func,
     renderRow: PropTypes.func,
@@ -57,7 +58,9 @@ export default class ModalDropdown extends Component {
 
     onDropdownWillShow: PropTypes.func,
     onDropdownWillHide: PropTypes.func,
-    onSelect: PropTypes.func
+    onSelect: PropTypes.func,
+
+    buttonOpacity: PropTypes.number
   };
 
   static defaultProps = {
@@ -68,7 +71,9 @@ export default class ModalDropdown extends Component {
     options: null,
     animated: true,
     showsVerticalScrollIndicator: true,
-    keyboardShouldPersistTaps: 'never'
+    keyboardShouldPersistTaps: 'never',
+    dropdownAutoWidth: false,
+    buttonOpacity: 0.2
   };
 
   constructor(props) {
@@ -163,7 +168,7 @@ export default class ModalDropdown extends Component {
   }
 
   _renderButton() {
-    const {disabled, accessible, children, textStyle} = this.props;
+    const {disabled, accessible, children, textStyle, buttonOpacity} = this.props;
     const {buttonText} = this.state;
 
     return (
@@ -171,6 +176,7 @@ export default class ModalDropdown extends Component {
                         disabled={disabled}
                         accessible={accessible}
                         onPress={this._onButtonPress}
+                        activeOpacity={buttonOpacity}
       >
         {
           children ||
@@ -225,7 +231,7 @@ export default class ModalDropdown extends Component {
   }
 
   _calcPosition() {
-    const {dropdownStyle, style, adjustFrame} = this.props;
+    const {dropdownStyle, style, adjustFrame, dropdownAutoWidth} = this.props;
 
     const dimensions = Dimensions.get('window');
     const windowWidth = dimensions.width;
@@ -253,6 +259,10 @@ export default class ModalDropdown extends Component {
         positionStyle.width = dropdownWidth;
       }
       positionStyle.right = rightSpace - this._buttonFrame.w;
+    }
+
+    if (dropdownAutoWidth) {
+      positionStyle.width = this._buttonFrame.w;
     }
 
     return adjustFrame ? adjustFrame(positionStyle) : positionStyle;
