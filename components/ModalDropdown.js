@@ -193,7 +193,7 @@ export default class ModalDropdown extends Component {
               >
                 {buttonText}
               </Text>
-              {renderButtonIcon && renderButtonIcon()}
+              {renderButtonIcon && renderButtonIcon(showDropdown)}
             </View>
           )
         }
