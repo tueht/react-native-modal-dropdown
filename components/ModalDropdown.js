@@ -66,6 +66,7 @@ export default class ModalDropdown extends Component {
   };
 
   static defaultProps = {
+    style: {},
     disabled: false,
     scrollEnabled: true,
     defaultIndex: -1,
